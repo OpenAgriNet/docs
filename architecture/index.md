@@ -206,4 +206,5 @@ Adding a new data source means adding a new provider + catalog generator — no 
 
 - **[Glossary](./glossary)** — Definitions for agricultural, protocol, and platform-specific terms
 - **[Pydantic Models Deep Dive](./pydantic-models)** — Full model hierarchy, code examples, and end-to-end request flow
+- **[Agentic Architecture](./agentic-architecture)** — How pydantic-ai agents orchestrate Beckn providers and document search
 - **[Regional & Organizational Variants](./variants)** — How MahaVistaar, Bharat OAN, and AMUL OAN adapt the architecture

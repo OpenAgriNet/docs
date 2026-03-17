@@ -23,6 +23,7 @@ export default withMermaid(
               { text: 'Overview', link: '/architecture/' },
               { text: 'Glossary', link: '/architecture/glossary' },
               { text: 'Pydantic Models', link: '/architecture/pydantic-models' },
+              { text: 'Agentic Architecture', link: '/architecture/agentic-architecture' },
               { text: 'Regional Variants', link: '/architecture/variants' }
             ]
           }
