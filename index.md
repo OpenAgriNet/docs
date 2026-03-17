@@ -9,8 +9,8 @@ hero:
       text: Architecture Overview
       link: /architecture/
     - theme: alt
-      text: Glossary
-      link: /architecture/glossary
+      text: Getting Started
+      link: /getting-started
 
 features:
   - title: Open Protocol (Beckn)
