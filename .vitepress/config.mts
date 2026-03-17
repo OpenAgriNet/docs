@@ -5,6 +5,7 @@ export default withMermaid(
   defineConfig({
     title: 'OpenAgriNet',
     description: 'Architecture documentation for OpenAgriNet — an open agricultural information network',
+    base: '/docs/',
 
     srcExclude: ['superpowers/**'],
 
