@@ -11,20 +11,11 @@ export default withMermaid(
 
     themeConfig: {
       nav: [
-        { text: 'Getting Started', link: '/getting-started' },
         { text: 'Architecture', link: '/architecture/' },
         { text: 'Glossary', link: '/architecture/glossary' }
       ],
 
       sidebar: {
-        '/getting-started': [
-          {
-            text: 'Getting Started',
-            items: [
-              { text: 'Installation & Setup', link: '/getting-started' }
-            ]
-          }
-        ],
         '/architecture/': [
           {
             text: 'Architecture',
