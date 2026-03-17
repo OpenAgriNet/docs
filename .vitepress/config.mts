@@ -24,7 +24,8 @@ export default withMermaid(
               { text: 'Glossary', link: '/architecture/glossary' },
               { text: 'Pydantic Models', link: '/architecture/pydantic-models' },
               { text: 'Agentic Architecture', link: '/architecture/agentic-architecture' },
-              { text: 'Regional Variants', link: '/architecture/variants' }
+              { text: 'Regional Variants', link: '/architecture/variants' },
+              { text: 'Voice OAN API', link: '/architecture/voice-oan-api' }
             ]
           }
         ]
