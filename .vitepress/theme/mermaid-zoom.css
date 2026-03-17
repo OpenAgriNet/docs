@@ -1,0 +1,47 @@
+.mermaid-zoom-auto {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 8px;
+  background: var(--vp-c-bg-soft);
+  min-height: 200px;
+  margin: 16px 0;
+  user-select: none;
+}
+
+.mermaid-zoom-inner {
+  display: inline-block;
+  padding: 16px;
+  transform-origin: 0 0;
+  cursor: grab;
+}
+
+.mermaid-zoom-auto .mermaid-zoom-controls {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  gap: 4px;
+  z-index: 10;
+}
+
+.mermaid-zoom-auto .mermaid-zoom-controls button {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 6px;
+  background: var(--vp-c-bg);
+  color: var(--vp-c-text-1);
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.mermaid-zoom-auto .mermaid-zoom-controls button:hover {
+  opacity: 1;
+  background: var(--vp-c-bg-soft);
+}
