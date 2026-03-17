@@ -1,10 +1,84 @@
-# Voice OAN API — Sequence Diagram
+# Voice OAN API — Sequence Diagrams
 
 ## Overview
 
-This document describes the end-to-end request flow for the `voice-oan-api` service (branch: `amul-dev`), an AI-powered voice assistant API for agricultural support built with FastAPI and pydantic-ai.
+This document describes the request flow for the `voice-oan-api` service (branch: `amul-dev`), an AI-powered voice assistant API for agricultural support built with FastAPI and pydantic-ai.
 
-## Sequence Diagram
+## Direct Flow (No Translation Pipeline)
+
+The simplified flow when the agent responds directly in the user's language (e.g. Gujarati prompt → Gujarati response). No pre-translation or post-translation steps.
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Router as Voice Router
+    participant Auth as JWT Auth
+    participant Redis as Redis Cache
+    participant VoiceSvc as Voice Service
+    participant GPT5Mini as GPT-5-mini
+    participant FarmerAPI as Farmer Backend
+    participant Agent as Voice Agent<br/>(pydantic-ai)
+    participant LLM as LLM Model
+    participant Marqo as Marqo Vector DB
+    participant RAYA as RAYA Provider
+
+    Client->>+Router: GET /api/voice/?query=...&session_id=...<br/>[JWT Bearer, SSE]
+    Router->>Auth: Validate JWT
+    Auth-->>Router: user_info
+    Router->>Redis: claim_session_request_ownership
+    Router->>Redis: get message_history
+    Redis-->>Router: history
+    Router-->>Client: StreamingResponse (text/event-stream)
+
+    Note over VoiceSvc: Early exits: feedback check, STT signals
+
+    VoiceSvc->>VoiceSvc: Arm nudge timer (1.5s / tool call)
+
+    VoiceSvc->>FarmerAPI: fetch_farmer_info_raw(mobile)
+    FarmerAPI-->>VoiceSvc: farmer records
+    VoiceSvc->>VoiceSvc: Build FarmerContext(lang_code=gu)
+
+    VoiceSvc->>VoiceSvc: clean & trim history (80K tokens)
+    VoiceSvc->>+Agent: run_stream(user_prompt, history, deps)
+    Agent->>Agent: Load Gujarati system prompt<br/>+ farmer context
+    Agent->>LLM: System prompt + history + query
+
+    loop Tool calls
+        LLM-->>Agent: tool_call
+        Agent->>Agent: fire_tool_call_nudge()
+        alt search_documents
+            Agent->>Marqo: hybrid search
+            Marqo-->>Agent: hits
+            Agent->>Agent: rerank + deduplicate
+        else get_farmer_by_mobile / get_animal_by_tag
+            Agent->>FarmerAPI: fetch data
+            FarmerAPI-->>Agent: records
+        else search_terms
+            Agent->>Agent: local glossary lookup
+        end
+        Agent-->>LLM: tool results
+    end
+
+    loop Stream response directly
+        LLM-->>Agent: text delta (Gujarati)
+        Agent-->>VoiceSvc: chunk
+        VoiceSvc->>VoiceSvc: clean_output_by_language
+        VoiceSvc->>VoiceSvc: Cancel nudge (first chunk)
+        VoiceSvc-->>Client: stream chunk
+    end
+    deactivate Agent
+
+    VoiceSvc->>Redis: update_message_history
+    opt Agent signaled conversation_closing
+        VoiceSvc->>Redis: set_feedback_initiated
+        VoiceSvc-->>Client: stream feedback question
+    end
+    VoiceSvc->>Redis: release_session_request_ownership
+```
+
+## Full Flow (With Translation Pipeline)
+
+The complete flow when the translation pipeline is enabled — query is pre-translated to English, agent runs in English, and the response is streamed back through TranslateGemma into the target language.
 
 ```mermaid
 sequenceDiagram
